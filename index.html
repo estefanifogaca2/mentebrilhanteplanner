@@ -1,0 +1,1260 @@
+<!doctype html>
+<html lang="pt-BR">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentes Brilhantes - Ebook Interativo</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Fredoka One', cursive, sans-serif;
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFCCCB 50%, #E6E6FA 100%);
+            min-height: 100%;
+            color: #2C3E50;
+        }
+
+        .book-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            aspect-ratio: 1;
+            position: relative;
+        }
+
+        .book-header {
+            background: linear-gradient(45deg, #FF6B9D, #4ECDC4, #45B7D1, #96CEB4);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .book-title {
+            font-size: 2.2rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        .author-name {
+            font-size: 1.2rem;
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .floating-icons {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .page-container {
+            padding: 25px;
+            height: calc(100% - 200px);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            animation: slideIn 0.6s ease-out;
+            min-height: 400px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .intro-page, .notebook-page {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .intro-title {
+            font-size: 2rem;
+            color: #FF6B9D;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .intro-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #34495E;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .day-page {
+            background: linear-gradient(135deg, #FFF8DC, #F0F8FF);
+            border-radius: 20px;
+            padding: 25px;
+            border: 3px solid #FFD700;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-title {
+            font-size: 1.8rem;
+            color: #E74C3C;
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .activity-section {
+            background: #E8F6F3;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #1ABC9C;
+        }
+
+        .activity-title {
+            font-size: 1.3rem;
+            color: #16A085;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .activity-description {
+            font-size: 1.1rem;
+            color: #2C3E50;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .positive-phrase {
+            background: linear-gradient(45deg, #FFE5B4, #FFCCCB);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px dashed #FF6B9D;
+            position: relative;
+        }
+
+        .positive-phrase::before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: white;
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .phrase-text {
+            font-size: 1.2rem;
+            color: #8E44AD;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        .interactive-fields {
+            margin-top: 25px;
+        }
+
+        .field-group {
+            margin-bottom: 20px;
+        }
+
+        .field-label {
+            font-size: 1.1rem;
+            color: #2980B9;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #BDC3C7;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.3s ease;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: #3498DB;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .save-button {
+            background: linear-gradient(45deg, #2ECC71, #27AE60);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 20px auto;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .save-button:disabled {
+            background: #BDC3C7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: linear-gradient(45deg, #F8F9FA, #E9ECEF);
+            border-top: 2px solid #DEE2E6;
+        }
+
+        .nav-button {
+            background: linear-gradient(45deg, #667EEA, #764BA2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-button:disabled {
+            background: #BDC3C7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .page-indicator {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #495057;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 15px;
+            border: 2px solid #DEE2E6;
+        }
+
+        .conclusion-page {
+            text-align: center;
+            background: linear-gradient(135deg, #FFE5B4, #E6E6FA);
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid #FFD700;
+        }
+
+        .conclusion-title {
+            font-size: 2rem;
+            color: #8E44AD;
+            margin-bottom: 20px;
+        }
+
+        .conclusion-text {
+            font-size: 1.2rem;
+            color: #2C3E50;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .celebration {
+            font-size: 3rem;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-7px); }
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #D4EDDA;
+            color: #155724;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .saved-notes {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .note-item {
+            background: #F8F9FA;
+            border: 2px solid #E9ECEF;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .note-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .note-content {
+            color: #6C757D;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .note-date {
+            font-size: 0.9rem;
+            color: #ADB5BD;
+            font-style: italic;
+        }
+
+        .delete-note-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #DC3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-note-btn:hover {
+            background: #C82333;
+        }
+
+        @media (max-width: 768px) {
+            .book-container {
+                margin: 10px;
+                max-width: calc(100% - 20px);
+            }
+            
+            .book-title {
+                font-size: 1.8rem;
+            }
+            
+            .day-title {
+                font-size: 1.5rem;
+            }
+            
+            .page-container {
+                padding: 20px;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="book-container">
+   <header class="book-header">
+    <div class="floating-icons">
+     <div class="floating-icon" style="top: 10%; left: 10%; animation-delay: 0s;">
+      ⭐
+     </div>
+     <div class="floating-icon" style="top: 20%; right: 15%; animation-delay: 1s;">
+      💖
+     </div>
+     <div class="floating-icon" style="bottom: 30%; left: 20%; animation-delay: 2s;">
+      📚
+     </div>
+     <div class="floating-icon" style="top: 40%; right: 10%; animation-delay: 3s;">
+      🌟
+     </div>
+     <div class="floating-icon" style="bottom: 20%; right: 25%; animation-delay: 4s;">
+      🦋
+     </div>
+    </div>
+    <h1 class="book-title" id="bookTitle">Mentes Brilhantes</h1>
+    <p class="author-name" id="authorName">por Estefani Fogaça</p>
+   </header>
+   <main class="page-container" id="pageContainer"><!-- Página do Bloco de Notas -->
+    <div class="page notebook-page" id="notebook">
+     <h2 class="intro-title">📝 Meu Bloco de Notas Especial 📝</h2>
+     <p class="intro-text">Este é seu espaço pessoal para anotar pensamentos, ideias, desenhos e tudo que quiser lembrar da nossa jornada!</p>
+     <div class="interactive-fields">
+      <div class="field-group"><label class="field-label" for="notebook-title"> 🏷️ Título da minha anotação: </label> <input type="text" class="field-input" id="notebook-title" placeholder="Ex: Minhas descobertas favoritas, Ideias malucas, etc." style="min-height: auto; height: 45px;">
+      </div>
+      <div class="field-group"><label class="field-label" for="notebook-content"> ✍️ Minhas anotações livres: </label> <textarea class="field-input" id="notebook-content" placeholder="Escreva aqui tudo que quiser: pensamentos, ideias, desenhos com palavras, histórias inventadas, coisas que aprendeu..." style="min-height: 200px;"></textarea>
+      </div><button class="save-button" onclick="saveNotebook()" id="save-notebook"> <span class="loading-spinner" id="spinner-notebook"></span> 💾 Salvar no Meu Bloco de Notas </button>
+      <div class="success-message" id="success-notebook">
+       ✅ Anotação salva com sucesso!
+      </div>
+     </div>
+     <div class="saved-notes" id="saved-notes">
+      <h3 class="activity-title" style="margin-top: 30px;">📚 Minhas Anotações Salvas</h3>
+      <div id="notes-list"></div>
+     </div>
+    </div><!-- Página de Introdução -->
+    <div class="page active intro-page" id="intro">
+     <h2 class="intro-title">🌟 Bem-vindos à Jornada das Mentes Brilhantes! 🌟</h2>
+     <p class="intro-text"><strong>Queridos pais e mães,</strong></p>
+     <p class="intro-text">Este ebook foi criado especialmente para vocês e seus pequenos exploradores! Durante 30 dias, vocês embarcarão juntos em uma aventura de descobertas, aprendizado e muito carinho.</p>
+     <p class="intro-text"><strong>🎯 Nosso propósito:</strong><br>
+       • Estimular a curiosidade natural das crianças<br>
+       • Fortalecer o vínculo familiar através de atividades compartilhadas<br>
+       • Desenvolver a criatividade e o pensamento crítico<br>
+       • Criar memórias afetivas positivas</p>
+     <p class="intro-text"><strong>📝 Como usar:</strong><br>
+       Cada dia traz uma atividade especial, uma frase positiva e espaços para registrar as descobertas e sentimentos da criança. Não há pressa - sigam o ritmo de vocês!</p>
+     <p class="intro-text" style="text-align: center; font-weight: bold; color: #E74C3C;">💝 Que esta jornada seja repleta de sorrisos, aprendizado e amor! 💝</p>
+    </div><!-- Páginas dos dias serão geradas dinamicamente --> <!-- Página de Conclusão -->
+    <div class="page conclusion-page" id="conclusion">
+     <h2 class="conclusion-title">🎉 Parabéns, Mente Brilhante! 🎉</h2>
+     <div class="celebration">
+      🌟✨🎊✨🌟
+     </div>
+     <p class="conclusion-text">Que jornada incrível vocês completaram! Durante 30 dias, exploraram, descobriram, criaram e cresceram juntos.</p>
+     <p class="conclusion-text"><strong id="childNameConclusion">Pequeno explorador</strong>, você mostrou curiosidade, criatividade e uma mente verdadeiramente brilhante! Continue sempre perguntando, experimentando e sonhando.</p>
+     <p class="conclusion-text"><strong>Queridos pais,</strong> vocês foram os guias perfeitos nesta aventura. O tempo dedicado, o carinho compartilhado e as memórias criadas são presentes que durarão para sempre.</p>
+     <p class="conclusion-text" style="font-weight: bold; color: #8E44AD;">🌈 Lembrem-se: toda criança tem uma mente brilhante esperando para ser descoberta! 🌈</p>
+     <div style="margin-top: 30px;"><button class="nav-button" onclick="restartJourney()" style="background: linear-gradient(45deg, #FF6B9D, #4ECDC4);"> 🔄 Começar Nova Jornada </button>
+     </div>
+    </div>
+   </main>
+   <nav class="navigation"><button class="nav-button" id="prevBtn" onclick="previousPage()"> ← Anterior </button>
+    <div class="page-indicator"><span id="currentPage">1</span> / <span id="totalPages">33</span>
+    </div><button class="nav-button" id="nextBtn" onclick="nextPage()"> Próxima → </button>
+   </nav>
+  </div>
+  <script>
+        // Configuração padrão
+        const defaultConfig = {
+            book_title: "Mentes Brilhantes",
+            author_name: "Estefani Fogaça",
+            child_name: ""
+        };
+
+        // Estado da aplicação
+        let currentPageIndex = 1; // Começar na página de introdução (índice 1)
+        let totalPages = 33; // bloco de notas + intro + 30 dias + conclusão
+        let savedData = new Map();
+        let savedNotes = [];
+        let isLoading = false;
+
+        // Dados das atividades para 30 dias
+        const activities = [
+            {
+                title: "Descobrindo o Mundo com Curiosidade",
+                activity: "Façam uma caminhada pela casa ou quintal e encontrem 5 coisas que vocês nunca notaram antes. Desenhem ou escrevam sobre elas!",
+                phrase: "Minha curiosidade me leva a descobertas incríveis todos os dias! 🔍✨"
+            },
+            {
+                title: "Pequeno Cientista",
+                activity: "Misturem água com diferentes ingredientes da cozinha (sal, açúcar, óleo) e observem o que acontece. Façam previsões antes!",
+                phrase: "Eu sou um cientista corajoso que adora fazer experimentos! 🧪🌟"
+            },
+            {
+                title: "Artista da Natureza",
+                activity: "Coletiem folhas, flores ou pedrinhas e criem uma obra de arte natural. Que formas e padrões vocês conseguem fazer?",
+                phrase: "Minha criatividade floresce como as flores no jardim! 🌸🎨"
+            },
+            {
+                title: "Contador de Histórias",
+                activity: "Inventem uma história sobre um animal mágico. Cada um conta uma parte da aventura. Desenhem o personagem principal!",
+                phrase: "Minhas palavras criam mundos mágicos cheios de possibilidades! 📚✨"
+            },
+            {
+                title: "Detetive dos Sentidos",
+                activity: "Façam um jogo dos sentidos: olhos fechados, toquem, cheirem e ouçam diferentes objetos. Conseguem adivinhar o que são?",
+                phrase: "Meus sentidos são superpoderes que me ajudam a conhecer o mundo! 👃👂👁️"
+            },
+            {
+                title: "Construtor de Sonhos",
+                activity: "Usando blocos, caixas ou almofadas, construam a casa dos sonhos. Como seria o quarto perfeito? E a cozinha?",
+                phrase: "Eu construo meus sonhos tijolo por tijolo, com amor e imaginação! 🏠💭"
+            },
+            {
+                title: "Chef Mirim",
+                activity: "Preparem um lanche saudável juntos. Que tal uma salada de frutas colorida ou sanduíches divertidos com formas?",
+                phrase: "Eu crio delícias saudáveis que nutrem meu corpo e minha alma! 👨‍🍳🥗"
+            },
+            {
+                title: "Explorador Musical",
+                activity: "Criem instrumentos musicais com materiais recicláveis. Façam uma banda familiar e componham uma música!",
+                phrase: "Minha música traz alegria e conecta corações! 🎵💖"
+            },
+            {
+                title: "Jardineiro Carinhoso",
+                activity: "Plantem uma semente em um vasinho. Cuidem dela todos os dias e observem seu crescimento. Que nome darão à plantinha?",
+                phrase: "Eu cuido da natureza com carinho e ela cresce comigo! 🌱🌿"
+            },
+            {
+                title: "Matemático Divertido",
+                activity: "Contem objetos pela casa: quantos sapatos? Quantas janelas? Façam gráficos coloridos com suas descobertas!",
+                phrase: "Os números são meus amigos e me ajudam a entender o mundo! 🔢📊"
+            },
+            {
+                title: "Escritor de Cartas",
+                activity: "Escrevam uma carta para alguém especial (avós, amigos, ou até para vocês mesmos no futuro). Decorem com desenhos!",
+                phrase: "Minhas palavras carregam amor e chegam ao coração das pessoas! 💌❤️"
+            },
+            {
+                title: "Observador de Nuvens",
+                activity: "Deitem-se no chão e observem as nuvens. Que formas vocês veem? Inventem histórias sobre elas!",
+                phrase: "Minha imaginação voa alto como as nuvens no céu! ☁️🦋"
+            },
+            {
+                title: "Colecionador de Memórias",
+                activity: "Criem um álbum de fotos ou desenhos dos momentos especiais desta semana. O que mais gostaram de fazer?",
+                phrase: "Eu coleciono momentos felizes que aquecem meu coração! 📸💝"
+            },
+            {
+                title: "Inventor Criativo",
+                activity: "Inventem uma máquina maluca usando materiais recicláveis. Para que ela serve? Como funciona?",
+                phrase: "Minha criatividade não tem limites - eu posso inventar qualquer coisa! ⚙️💡"
+            },
+            {
+                title: "Amigo dos Animais",
+                activity: "Pesquisem sobre um animal que vocês acham interessante. Onde vive? O que come? Façam um desenho dele!",
+                phrase: "Eu respeito e amo todos os seres vivos do nosso planeta! 🐾🌍"
+            },
+            {
+                title: "Dançarino Expressivo",
+                activity: "Criem uma dança que represente diferentes emoções: alegria, surpresa, calma. Que movimentos combinam com cada sentimento?",
+                phrase: "Meu corpo dança a música da vida com alegria e liberdade! 💃🎶"
+            },
+            {
+                title: "Leitor Aventureiro",
+                activity: "Escolham um livro e leiam juntos. Depois, recontem a história mudando o final. Como vocês gostariam que terminasse?",
+                phrase: "Cada livro é uma porta para uma nova aventura incrível! 📖🚪"
+            },
+            {
+                title: "Meteorologista Curioso",
+                activity: "Observem o tempo durante uma semana. Façam um calendário marcando sol, chuva, nuvens. Que padrões vocês notam?",
+                phrase: "Eu observo a natureza e aprendo seus segredos todos os dias! 🌤️📅"
+            },
+            {
+                title: "Artista Reciclador",
+                activity: "Transformem materiais recicláveis em obras de arte. Uma garrafa pode virar um vaso, uma caixa pode virar um robô!",
+                phrase: "Eu transformo o comum em extraordinário com minha criatividade! ♻️🎨"
+            },
+            {
+                title: "Contador de Piadas",
+                activity: "Aprendam piadas engraçadas e contem para a família. Inventem suas próprias piadas também!",
+                phrase: "Meu sorriso e alegria iluminam o dia de todas as pessoas! 😄☀️"
+            },
+            {
+                title: "Explorador do Espaço",
+                activity: "Pesquisem sobre planetas e estrelas. Criem seu próprio sistema solar usando bolinhas de diferentes tamanhos!",
+                phrase: "Minha curiosidade alcança as estrelas e além! 🚀⭐"
+            },
+            {
+                title: "Chef de Cores",
+                activity: "Misturem tintas ou corantes alimentares para descobrir novas cores. Que cor surge quando misturam azul e amarelo?",
+                phrase: "Eu pinto minha vida com as cores mais belas e vibrantes! 🌈🎨"
+            },
+            {
+                title: "Construtor de Pontes",
+                activity: "Usando palitos, massinha ou blocos, construam pontes. Testem qual suporta mais peso. Por que algumas são mais fortes?",
+                phrase: "Eu construo pontes que conectam sonhos à realidade! 🌉💪"
+            },
+            {
+                title: "Cuidador Carinhoso",
+                activity: "Cuidem de um brinquedo como se fosse um bebê por um dia. O que ele precisa? Como vocês se sentem cuidando?",
+                phrase: "Meu coração é cheio de amor e cuidado para compartilhar! 🧸💕"
+            },
+            {
+                title: "Explorador de Texturas",
+                activity: "Coletiem objetos com texturas diferentes: liso, áspero, macio, duro. Criem um mural das texturas!",
+                phrase: "Eu descubro maravilhas através do meu toque carinhoso! ✋🔍"
+            },
+            {
+                title: "Contador de Bênçãos",
+                activity: "Façam uma lista de 10 coisas pelas quais são gratos hoje. Desenhem ou escrevam cada uma delas!",
+                phrase: "Meu coração transborda de gratidão por todas as bênçãos da vida! 🙏💖"
+            },
+            {
+                title: "Arquiteto de Castelos",
+                activity: "Construam castelos de areia (ou farinha, ou blocos). Que cômodos tem seu castelo? Quem mora nele?",
+                phrase: "Eu construo castelos onde meus sonhos podem morar! 🏰✨"
+            },
+            {
+                title: "Pesquisador de Família",
+                activity: "Conversem sobre a história da família. Vejam fotos antigas e escutem histórias dos avós. Façam uma árvore genealógica!",
+                phrase: "Eu sou parte de uma família incrível cheia de amor e histórias! 👨‍👩‍👧‍👦📜"
+            },
+            {
+                title: "Mestre dos Jogos",
+                activity: "Inventem um jogo novo com regras próprias. Ensinem para outros membros da família. Divirtam-se juntos!",
+                phrase: "Eu crio diversão e alegria onde quer que eu vá! 🎲🎉"
+            },
+            {
+                title: "Celebrador de Conquistas",
+                activity: "Façam uma festa para celebrar tudo que aprenderam nestes 30 dias! Que foi mais divertido? O que mais os surpreendeu?",
+                phrase: "Eu celebro cada conquista e cada passo da minha jornada de crescimento! 🎊🌟"
+            }
+        ];
+
+        // Handler para o Data SDK
+        const dataHandler = {
+            onDataChanged(data) {
+                // Separar dados por tipo
+                const dayRecords = data.filter(record => record.note_type !== 'notebook');
+                const noteRecords = data.filter(record => record.note_type === 'notebook');
+                
+                // Atualizar mapa de dados salvos dos dias
+                savedData.clear();
+                dayRecords.forEach(record => {
+                    savedData.set(record.day, record);
+                });
+                
+                // Atualizar notas salvas
+                savedNotes = noteRecords;
+                renderNotesList();
+                
+                // Atualizar campos da página atual se for uma página de dia
+                if (currentPageIndex > 1 && currentPageIndex <= 31) {
+                    const dayNumber = currentPageIndex - 1;
+                    const savedRecord = savedData.get(dayNumber);
+                    if (savedRecord) {
+                        const activityInput = document.getElementById(`activity-${dayNumber}`);
+                        const observationsInput = document.getElementById(`observations-${dayNumber}`);
+                        const feelingsInput = document.getElementById(`feelings-${dayNumber}`);
+                        
+                        if (activityInput) activityInput.value = savedRecord.activity_notes || '';
+                        if (observationsInput) observationsInput.value = savedRecord.observations || '';
+                        if (feelingsInput) feelingsInput.value = savedRecord.feelings || '';
+                    }
+                }
+            }
+        };
+
+        // Função de renderização para o Element SDK
+        async function render(config) {
+            const bookTitle = config.book_title || defaultConfig.book_title;
+            const authorName = config.author_name || defaultConfig.author_name;
+            const childName = config.child_name || defaultConfig.child_name;
+            
+            document.getElementById('bookTitle').textContent = bookTitle;
+            document.getElementById('authorName').textContent = `por ${authorName}`;
+            
+            // Atualizar nome da criança na conclusão
+            const childNameElement = document.getElementById('childNameConclusion');
+            if (childNameElement) {
+                childNameElement.textContent = childName || 'Pequeno explorador';
+            }
+        }
+
+        // Capacidades de edição
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [
+                    {
+                        get: () => config.primary_color || '#FF6B9D',
+                        set: (value) => {
+                            config.primary_color = value;
+                            window.elementSdk.setConfig({ primary_color: value });
+                            updatePrimaryColor(value);
+                        }
+                    },
+                    {
+                        get: () => config.secondary_color || '#4ECDC4',
+                        set: (value) => {
+                            config.secondary_color = value;
+                            window.elementSdk.setConfig({ secondary_color: value });
+                            updateSecondaryColor(value);
+                        }
+                    }
+                ],
+                borderables: [],
+                fontEditable: {
+                    get: () => config.font_family || 'Comic Sans MS',
+                    set: (value) => {
+                        config.font_family = value;
+                        window.elementSdk.setConfig({ font_family: value });
+                        updateFontFamily(value);
+                    }
+                },
+                fontSizeable: {
+                    get: () => config.font_size || 16,
+                    set: (value) => {
+                        config.font_size = value;
+                        window.elementSdk.setConfig({ font_size: value });
+                        updateFontSize(value);
+                    }
+                }
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["book_title", config.book_title || defaultConfig.book_title],
+                ["author_name", config.author_name || defaultConfig.author_name],
+                ["child_name", config.child_name || defaultConfig.child_name]
+            ]);
+        }
+
+        function updatePrimaryColor(color) {
+            document.documentElement.style.setProperty('--primary-color', color);
+        }
+
+        function updateSecondaryColor(color) {
+            document.documentElement.style.setProperty('--secondary-color', color);
+        }
+
+        function updateFontFamily(fontFamily) {
+            document.body.style.fontFamily = `${fontFamily}, 'Comic Sans MS', cursive, sans-serif`;
+        }
+
+        function updateFontSize(fontSize) {
+            const baseSize = fontSize;
+            document.querySelector('.book-title').style.fontSize = `${baseSize * 2.2}px`;
+            document.querySelectorAll('.intro-text, .activity-description, .conclusion-text').forEach(el => {
+                el.style.fontSize = `${baseSize * 1.1}px`;
+            });
+            document.querySelectorAll('.day-title').forEach(el => {
+                el.style.fontSize = `${baseSize * 1.8}px`;
+            });
+        }
+
+        // Salvar anotação do bloco de notas
+        async function saveNotebook() {
+            if (isLoading) return;
+            
+            const titleInput = document.getElementById('notebook-title');
+            const contentInput = document.getElementById('notebook-content');
+            const saveButton = document.getElementById('save-notebook');
+            const spinner = document.getElementById('spinner-notebook');
+            const successMessage = document.getElementById('success-notebook');
+            
+            if (!titleInput.value.trim() || !contentInput.value.trim()) {
+                // Criar mensagem de erro inline
+                let errorMsg = document.getElementById('error-notebook');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.id = 'error-notebook';
+                    errorMsg.style.cssText = 'background: #F8D7DA; color: #721C24; padding: 10px 15px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px;';
+                    successMessage.parentNode.insertBefore(errorMsg, successMessage.nextSibling);
+                }
+                errorMsg.innerHTML = '⚠️ Por favor, preencha o título e o conteúdo da anotação!';
+                errorMsg.style.display = 'flex';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 3000);
+                return;
+            }
+            
+            // Mostrar loading
+            isLoading = true;
+            saveButton.disabled = true;
+            spinner.style.display = 'inline-block';
+            successMessage.style.display = 'none';
+            
+            try {
+                // Verificar limite de registros
+                const allRecords = [...savedData.values(), ...savedNotes];
+                if (allRecords.length >= 999) {
+                    // Criar mensagem de limite
+                    let limitMsg = document.getElementById('limit-notebook');
+                    if (!limitMsg) {
+                        limitMsg = document.createElement('div');
+                        limitMsg.id = 'limit-notebook';
+                        limitMsg.style.cssText = 'background: #FFF3CD; color: #856404; padding: 10px 15px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px;';
+                        successMessage.parentNode.insertBefore(limitMsg, successMessage.nextSibling);
+                    }
+                    limitMsg.innerHTML = '⚠️ Limite máximo de 999 anotações atingido. Exclua algumas anotações primeiro.';
+                    limitMsg.style.display = 'flex';
+                    return;
+                }
+                
+                const noteData = {
+                    notebook_title: titleInput.value.trim(),
+                    notebook_content: contentInput.value.trim(),
+                    note_type: 'notebook',
+                    date_completed: new Date().toISOString()
+                };
+                
+                const result = await window.dataSdk.create(noteData);
+                
+                if (result.isOk) {
+                    // Limpar campos
+                    titleInput.value = '';
+                    contentInput.value = '';
+                    
+                    successMessage.style.display = 'flex';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    // Criar mensagem de erro inline
+                    let errorMsg = document.getElementById('error-notebook');
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.id = 'error-notebook';
+                        errorMsg.style.cssText = 'background: #F8D7DA; color: #721C24; padding: 10px 15px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px;';
+                        successMessage.parentNode.insertBefore(errorMsg, successMessage.nextSibling);
+                    }
+                    errorMsg.innerHTML = '❌ Erro ao salvar anotação. Tente novamente.';
+                    errorMsg.style.display = 'flex';
+                }
+            } catch (error) {
+                // Criar mensagem de erro inline
+                let errorMsg = document.getElementById('error-notebook');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.id = 'error-notebook';
+                    errorMsg.style.cssText = 'background: #F8D7DA; color: #721C24; padding: 10px 15px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px;';
+                    successMessage.parentNode.insertBefore(errorMsg, successMessage.nextSibling);
+                }
+                errorMsg.innerHTML = '❌ Erro ao salvar anotação. Tente novamente.';
+                errorMsg.style.display = 'flex';
+            } finally {
+                isLoading = false;
+                saveButton.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Renderizar lista de notas salvas
+        function renderNotesList() {
+            const notesList = document.getElementById('notes-list');
+            
+            if (savedNotes.length === 0) {
+                notesList.innerHTML = '<p style="color: #6C757D; font-style: italic; text-align: center; padding: 20px;">Nenhuma anotação salva ainda. Que tal escrever a primeira? ✨</p>';
+                return;
+            }
+            
+            // Ordenar notas por data (mais recentes primeiro)
+            const sortedNotes = [...savedNotes].sort((a, b) => 
+                new Date(b.date_completed) - new Date(a.date_completed)
+            );
+            
+            notesList.innerHTML = sortedNotes.map(note => `
+                <div class="note-item">
+                    <button class="delete-note-btn" onclick="deleteNote('${note.__backendId}')" title="Excluir anotação">
+                        ×
+                    </button>
+                    <div class="note-title">${note.notebook_title}</div>
+                    <div class="note-content">${note.notebook_content}</div>
+                    <div class="note-date">Salvo em: ${new Date(note.date_completed).toLocaleDateString('pt-BR')}</div>
+                </div>
+            `).join('');
+        }
+
+        // Excluir nota
+        async function deleteNote(noteId) {
+            const noteToDelete = savedNotes.find(note => note.__backendId === noteId);
+            if (!noteToDelete) return;
+            
+            // Confirmação inline
+            const noteElement = event.target.closest('.note-item');
+            const originalContent = noteElement.innerHTML;
+            
+            noteElement.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <p style="margin-bottom: 15px; color: #721C24;">Tem certeza que deseja excluir esta anotação?</p>
+                    <button onclick="confirmDeleteNote('${noteId}')" style="background: #DC3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                        Sim, excluir
+                    </button>
+                    <button onclick="cancelDeleteNote(this, \`${originalContent.replace(/`/g, '\\`')}\`)" style="background: #6C757D; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                        Cancelar
+                    </button>
+                </div>
+            `;
+        }
+
+        async function confirmDeleteNote(noteId) {
+            const noteToDelete = savedNotes.find(note => note.__backendId === noteId);
+            if (!noteToDelete) return;
+            
+            try {
+                const result = await window.dataSdk.delete(noteToDelete);
+                if (!result.isOk) {
+                    // Criar mensagem de erro
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'background: #F8D7DA; color: #721C24; padding: 10px 15px; border-radius: 10px; margin: 10px 0; text-align: center;';
+                    errorDiv.innerHTML = '❌ Erro ao excluir anotação. Tente novamente.';
+                    document.getElementById('notes-list').prepend(errorDiv);
+                    setTimeout(() => errorDiv.remove(), 3000);
+                }
+            } catch (error) {
+                // Criar mensagem de erro
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'background: #F8D7DA; color: #721C24; padding: 10px 15px; border-radius: 10px; margin: 10px 0; text-align: center;';
+                errorDiv.innerHTML = '❌ Erro ao excluir anotação. Tente novamente.';
+                document.getElementById('notes-list').prepend(errorDiv);
+                setTimeout(() => errorDiv.remove(), 3000);
+            }
+        }
+
+        function cancelDeleteNote(button, originalContent) {
+            const noteElement = button.closest('.note-item');
+            noteElement.innerHTML = originalContent;
+        }
+
+        // Inicializar SDKs
+        async function initializeApp() {
+            // Inicializar Data SDK
+            if (window.dataSdk) {
+                const initResult = await window.dataSdk.init(dataHandler);
+                if (!initResult.isOk) {
+                    console.error("Erro ao inicializar Data SDK");
+                }
+            }
+
+            // Inicializar Element SDK
+            if (window.elementSdk) {
+                window.elementSdk.init({
+                    defaultConfig,
+                    render,
+                    mapToCapabilities,
+                    mapToEditPanelValues
+                });
+            }
+
+            // Gerar páginas dos dias
+            generateDayPages();
+            updateNavigation();
+        }
+
+        // Gerar páginas dos dias
+        function generateDayPages() {
+            const pageContainer = document.getElementById('pageContainer');
+            const conclusionPage = document.getElementById('conclusion');
+            
+            activities.forEach((activity, index) => {
+                const dayNumber = index + 1;
+                const dayPage = createDayPage(dayNumber, activity);
+                pageContainer.insertBefore(dayPage, conclusionPage);
+            });
+        }
+
+        // Criar página de um dia
+        function createDayPage(dayNumber, activity) {
+            const page = document.createElement('div');
+            page.className = 'page day-page';
+            page.id = `day-${dayNumber}`;
+            
+            page.innerHTML = `
+                <h2 class="day-title">
+                    🌟 Dia ${dayNumber} — ${activity.title} 🌟
+                </h2>
+                
+                <div class="activity-section">
+                    <h3 class="activity-title">
+                        🎯 Atividade do Dia
+                    </h3>
+                    <p class="activity-description">${activity.activity}</p>
+                </div>
+                
+                <div class="positive-phrase">
+                    <p class="phrase-text">"${activity.phrase}"</p>
+                </div>
+                
+                <div class="interactive-fields">
+                    <div class="field-group">
+                        <label class="field-label" for="activity-${dayNumber}">
+                            📝 Minhas anotações sobre a atividade:
+                        </label>
+                        <textarea class="field-input" id="activity-${dayNumber}" 
+                                placeholder="Como foi fazer esta atividade? O que você descobriu?"></textarea>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label" for="observations-${dayNumber}">
+                            🔍 Observações e descobertas:
+                        </label>
+                        <textarea class="field-input" id="observations-${dayNumber}" 
+                                placeholder="O que você observou? Que descobertas fez?"></textarea>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label" for="feelings-${dayNumber}">
+                            💖 Como me senti:
+                        </label>
+                        <textarea class="field-input" id="feelings-${dayNumber}" 
+                                placeholder="Como você se sentiu fazendo esta atividade?"></textarea>
+                    </div>
+                    
+                    <button class="save-button" onclick="saveDay(${dayNumber})" id="save-${dayNumber}">
+                        <span class="loading-spinner" id="spinner-${dayNumber}"></span>
+                        💾 Salvar Minhas Descobertas
+                    </button>
+                    
+                    <div class="success-message" id="success-${dayNumber}">
+                        ✅ Descobertas salvas com sucesso!
+                    </div>
+                </div>
+            `;
+            
+            return page;
+        }
+
+        // Salvar dados de um dia
+        async function saveDay(dayNumber) {
+            if (isLoading) return;
+            
+            const activityInput = document.getElementById(`activity-${dayNumber}`);
+            const observationsInput = document.getElementById(`observations-${dayNumber}`);
+            const feelingsInput = document.getElementById(`feelings-${dayNumber}`);
+            const saveButton = document.getElementById(`save-${dayNumber}`);
+            const spinner = document.getElementById(`spinner-${dayNumber}`);
+            const successMessage = document.getElementById(`success-${dayNumber}`);
+            
+            // Mostrar loading
+            isLoading = true;
+            saveButton.disabled = true;
+            spinner.style.display = 'inline-block';
+            successMessage.style.display = 'none';
+            
+            try {
+                // Verificar limite de registros
+                const allRecords = [...savedData.values(), ...savedNotes];
+                if (allRecords.length >= 999 && !savedData.has(dayNumber)) {
+                    // Criar mensagem de limite inline
+                    let limitMsg = document.getElementById(`limit-${dayNumber}`);
+                    if (!limitMsg) {
+                        limitMsg = document.createElement('div');
+                        limitMsg.id = `limit-${dayNumber}`;
+                        limitMsg.style.cssText = 'background: #FFF3CD; color: #856404; padding: 10px 15px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px;';
+                        successMessage.parentNode.insertBefore(limitMsg, successMessage.nextSibling);
+                    }
+                    limitMsg.innerHTML = '⚠️ Limite máximo de 999 registros atingido. Exclua algumas anotações primeiro.';
+                    limitMsg.style.display = 'flex';
+                    return;
+                }
+                
+                const existingRecord = savedData.get(dayNumber);
+                const recordData = {
+                    day: dayNumber,
+                    activity_notes: activityInput.value,
+                    observations: observationsInput.value,
+                    feelings: feelingsInput.value,
+                    date_completed: new Date().toISOString(),
+                    note_type: 'day'
+                };
+                
+                let result;
+                if (existingRecord) {
+                    // Atualizar registro existente
+                    const updatedRecord = { ...existingRecord, ...recordData };
+                    result = await window.dataSdk.update(updatedRecord);
+                } else {
+                    // Criar novo registro
+                    result = await window.dataSdk.create(recordData);
+                }
+                
+                if (result.isOk) {
+                    successMessage.style.display = 'flex';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    // Criar mensagem de erro inline
+                    let errorMsg = document.getElementById(`error-${dayNumber}`);
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.id = `error-${dayNumber}`;
+                        errorMsg.style.cssText = 'background: #F8D7DA; color: #721C24; padding: 10px 15px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px;';
+                        successMessage.parentNode.insertBefore(errorMsg, successMessage.nextSibling);
+                    }
+                    errorMsg.innerHTML = '❌ Erro ao salvar. Tente novamente.';
+                    errorMsg.style.display = 'flex';
+                }
+            } catch (error) {
+                // Criar mensagem de erro inline
+                let errorMsg = document.getElementById(`error-${dayNumber}`);
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.id = `error-${dayNumber}`;
+                    errorMsg.style.cssText = 'background: #F8D7DA; color: #721C24; padding: 10px 15px; border-radius: 10px; margin-top: 10px; display: flex; align-items: center; gap: 8px;';
+                    successMessage.parentNode.insertBefore(errorMsg, successMessage.nextSibling);
+                }
+                errorMsg.innerHTML = '❌ Erro ao salvar. Tente novamente.';
+                errorMsg.style.display = 'flex';
+            } finally {
+                isLoading = false;
+                saveButton.disabled = false;
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Navegação
+        function showPage(index) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            const pages = document.querySelectorAll('.page');
+            if (pages[index]) {
+                pages[index].classList.add('active');
+                currentPageIndex = index;
+                
+                // Carregar dados salvos se for uma página de dia
+                if (index > 1 && index <= 31) {
+                    const dayNumber = index - 1;
+                    const savedRecord = savedData.get(dayNumber);
+                    if (savedRecord) {
+                        const activityInput = document.getElementById(`activity-${dayNumber}`);
+                        const observationsInput = document.getElementById(`observations-${dayNumber}`);
+                        const feelingsInput = document.getElementById(`feelings-${dayNumber}`);
+                        
+                        if (activityInput) activityInput.value = savedRecord.activity_notes || '';
+                        if (observationsInput) observationsInput.value = savedRecord.observations || '';
+                        if (feelingsInput) feelingsInput.value = savedRecord.feelings || '';
+                    }
+                }
+            }
+            
+            document.getElementById('currentPage').textContent = index + 1;
+            updateNavigation();
+        }
+
+        function nextPage() {
+            if (currentPageIndex < totalPages - 1) {
+                showPage(currentPageIndex + 1);
+            }
+        }
+
+        function previousPage() {
+            if (currentPageIndex > 0) {
+                showPage(currentPageIndex - 1);
+            }
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentPageIndex === 0;
+            nextBtn.disabled = currentPageIndex === totalPages - 1;
+            
+            if (currentPageIndex === totalPages - 1) {
+                nextBtn.textContent = 'Fim';
+            } else {
+                nextBtn.innerHTML = 'Próxima →';
+            }
+        }
+
+        function restartJourney() {
+            // Criar confirmação inline
+            const conclusionPage = document.getElementById('conclusion');
+            const originalContent = conclusionPage.innerHTML;
+            
+            conclusionPage.innerHTML = `
+                <div style="text-align: center; padding: 50px 20px;">
+                    <h2 style="color: #8E44AD; margin-bottom: 20px;">🔄 Começar Nova Jornada?</h2>
+                    <p style="font-size: 1.1rem; margin-bottom: 30px; color: #2C3E50;">
+                        Isso não apagará suas anotações salvas, apenas voltará para o início do livro.
+                    </p>
+                    <button onclick="confirmRestart()" style="background: linear-gradient(45deg, #FF6B9D, #4ECDC4); color: white; border: none; padding: 12px 25px; border-radius: 20px; font-size: 1.1rem; margin-right: 15px; cursor: pointer;">
+                        ✅ Sim, começar novamente
+                    </button>
+                    <button onclick="cancelRestart(\`${originalContent.replace(/`/g, '\\`')}\`)" style="background: #6C757D; color: white; border: none; padding: 12px 25px; border-radius: 20px; font-size: 1.1rem; cursor: pointer;">
+                        ❌ Cancelar
+                    </button>
+                </div>
+            `;
+        }
+
+        function confirmRestart() {
+            showPage(1); // Voltar para a página de introdução
+        }
+
+        function cancelRestart(originalContent) {
+            document.getElementById('conclusion').innerHTML = originalContent;
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991cb57c16016d3a',t:'MTc2MTAwNzI4Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
